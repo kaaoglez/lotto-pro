@@ -1012,17 +1012,22 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
               </div>
             </div>
             {/* AGREGAR SORTEO — key forces full re-creation when lottery changes */}
-            <div key={`add-draw-${lottery}`} className="bg-[#141414] border border-white/5 rounded-2xl p-5 sm:p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2"><Plus className="w-4 h-4 text-green-400" /><h3 className="text-sm font-semibold text-white">Agregar Sorteo — {cfg.name}</h3></div>
-                <div className={`px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wider ${lottery === 'lotto-649' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-green-500/20 text-green-400 border border-green-500/30'}`}>{cfg.numCount} NUMEROS · 1-{cfg.maxNum}</div>
+            <div key={`add-draw-${lottery}`} className="bg-[#141414] border border-white/5 rounded-2xl p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2"><Plus className="w-4 h-4 text-green-400" /><h3 className="text-sm font-semibold text-white">Agregar Sorteo</h3></div>
+                <div className={`px-2 py-0.5 rounded-md text-[9px] font-bold tracking-wider ${lottery === 'lotto-649' ? 'bg-amber-500/20 text-amber-400' : 'bg-green-500/20 text-green-400'}`}>{cfg.numCount} NUM</div>
               </div>
               {!batchMode ? (
-                <div className="space-y-4">
+                <div className="space-y-3">
+                  {/* Date */}
                   <div className="flex items-center gap-2"><Calendar className="w-4 h-4 text-gray-500 shrink-0" /><input type="date" value={newDrawDate} onChange={e => setNewDrawDate(e.target.value)} className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-green-400" /></div>
-                  <div><p className={`text-xs font-bold uppercase tracking-wider mb-2 ${lottery === 'lotto-649' ? 'text-amber-400' : 'text-green-400'}`}>Ingresa {cfg.numCount} Numeros ({cfg.name})</p><div className="flex flex-wrap gap-2" key={`inputs-${lottery}`}>{Array.from({ length: cfg.numCount }, (_, i) => (<div key={`${lottery}-n${i}`} className="relative"><span className="absolute -top-4 left-1/2 -translate-x-1/2 text-[9px] text-gray-600">N{i + 1}</span><input type="number" min="1" max={cfg.maxNum} inputMode="numeric" placeholder={String(i + 1)} value={newDrawNums[i] || ''} onChange={e => { const c = e.target.value.replace(/[^0-9]/g, '').slice(0, 2); const n = [...newDrawNums]; n[i] = c; setNewDrawNums(n); }} className="w-12 h-12 text-center text-lg font-bold rounded-xl bg-white/5 border-2 border-white/10 text-gray-300 focus:outline-none focus:border-green-400" /></div>))}</div></div>
-                  <div><p className="text-[10px] text-gray-500 uppercase tracking-wider mb-2">Bonus</p><input type="number" min="1" max={cfg.maxNum} inputMode="numeric" placeholder="Bonus" value={newDrawBonus} onChange={e => setNewDrawBonus(e.target.value.replace(/[^0-9]/g, '').slice(0, 2))} className="w-20 h-12 text-center text-lg font-bold rounded-xl bg-white/5 border-2 border-orange-500/30 text-orange-400 focus:outline-none focus:border-orange-400" /></div>
-                  <button onClick={saveSingleDraw} disabled={saving} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-green-500 hover:bg-green-400 text-black font-semibold text-sm transition-all disabled:opacity-50">{saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Guardar</button>
+                  {/* Numbers + Bonus — single line */}
+                  <div className="flex items-center gap-1.5 sm:gap-2" key={`inputs-${lottery}`}>
+                    {Array.from({ length: cfg.numCount }, (_, i) => (<input key={`${lottery}-n${i}`} type="number" min="1" max={cfg.maxNum} inputMode="numeric" placeholder={String(i + 1)} value={newDrawNums[i] || ''} onChange={e => { const c = e.target.value.replace(/[^0-9]/g, '').slice(0, 2); const n = [...newDrawNums]; n[i] = c; setNewDrawNums(n); }} className="flex-1 min-w-0 h-11 sm:h-12 text-center text-sm sm:text-lg font-bold rounded-lg sm:rounded-xl bg-white/5 border-2 border-white/10 text-gray-300 focus:outline-none focus:border-green-400" />))}
+                    <span className="text-gray-600 text-lg mx-0.5 shrink-0">+</span>
+                    <input type="number" min="1" max={cfg.maxNum} inputMode="numeric" placeholder="B" value={newDrawBonus} onChange={e => setNewDrawBonus(e.target.value.replace(/[^0-9]/g, '').slice(0, 2))} className="flex-1 min-w-0 max-w-[3.5rem] sm:max-w-none h-11 sm:h-12 text-center text-sm sm:text-lg font-bold rounded-lg sm:rounded-xl bg-orange-500/5 border-2 border-orange-500/30 text-orange-400 focus:outline-none focus:border-orange-400" />
+                  </div>
+                  <button onClick={saveSingleDraw} disabled={saving} className="flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-green-500 hover:bg-green-400 text-black font-semibold text-xs sm:text-sm transition-all disabled:opacity-50">{saving ? <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" /> : <Save className="w-3.5 h-3.5 sm:w-4 sm:h-4" />} Guardar</button>
                 </div>
               ) : (
                 <div className="space-y-3">
