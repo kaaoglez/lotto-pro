@@ -45,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0a0a0a] text-gray-100`}>
         {children}
-        <Toaster theme="dark" position="top-left" richColors closeButton />
+        <Toaster theme="dark" position="top-left" richColors closeButton style={{ top: '5rem' }} />
         {/* Service Worker Registration */}
         <script
           dangerouslySetInnerHTML={{
