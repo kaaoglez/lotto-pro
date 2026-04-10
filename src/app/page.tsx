@@ -488,36 +488,34 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0a0a0a]">
-      {/* HEADER with lottery selector + last draw */}
+      {/* HEADER — compact on mobile, full on desktop */}
       <header className="border-b border-white/5 bg-[#0f0f0f]/80 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5 shrink-0">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${lottery === 'lotto-max' ? 'bg-gradient-to-br from-green-400 to-emerald-600' : 'bg-gradient-to-br from-amber-400 to-orange-600'}`}><Dna className="w-5 h-5 text-black" /></div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-base font-black tracking-tight text-white">{cfg.name}</h1>
-              </div>
-              <p className="text-[10px] tracking-widest text-gray-500 uppercase">Dashboard Estadistico</p>
+        <div className="max-w-5xl mx-auto px-3 sm:px-4 py-2 sm:py-3">
+          {/* Top row: logo + name + toggle */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 shrink-0">
+              <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center ${lottery === 'lotto-max' ? 'bg-gradient-to-br from-green-400 to-emerald-600' : 'bg-gradient-to-br from-amber-400 to-orange-600'}`}><Dna className="w-4 h-4 sm:w-5 sm:h-5 text-black" /></div>
+              <h1 className="text-sm sm:text-base font-black tracking-tight text-white">{cfg.name}</h1>
+            </div>
+            <div className="flex items-center gap-1 bg-white/5 rounded-xl p-1 border border-white/10 shrink-0">
+              {(['lotto-max', 'lotto-649'] as LotteryType[]).map(lt => {
+                const lc = LOTTERY_CONFIGS[lt];
+                const isActive = lottery === lt;
+                return (
+                  <button key={lt} onClick={() => onSwitch(lt)}
+                    className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all ${isActive
+                      ? lt === 'lotto-max' ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-black shadow-lg shadow-green-500/20' : 'bg-gradient-to-r from-amber-500 to-orange-600 text-black shadow-lg shadow-amber-500/20'
+                      : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                    }`}>
+                    {lc.shortName}
+                  </button>
+                );
+              })}
             </div>
           </div>
-          {/* Lottery Selector Toggle */}
-          <div className="flex items-center gap-1 bg-white/5 rounded-xl p-1 border border-white/10 shrink-0">
-            {(['lotto-max', 'lotto-649'] as LotteryType[]).map(lt => {
-              const lc = LOTTERY_CONFIGS[lt];
-              const isActive = lottery === lt;
-              return (
-                <button key={lt} onClick={() => onSwitch(lt)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${isActive
-                    ? lt === 'lotto-max' ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-black shadow-lg shadow-green-500/20' : 'bg-gradient-to-r from-amber-500 to-orange-600 text-black shadow-lg shadow-amber-500/20'
-                    : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
-                  }`}>
-                  {lc.shortName}
-                </button>
-              );
-            })}
-          </div>
+          {/* Bottom row: last draw on mobile only — shown as compact single line */}
           {lastDraw && (
-            <div className="flex flex-col items-end gap-1 shrink-0">
+            <div className="mt-1.5 sm:mt-0 hidden sm:flex flex-col items-end gap-1">
               <span className="text-[10px] text-gray-500 tracking-wider">SORTEO #{dbStatus?.lastDrawNumber || '---'} · {lastDraw.date}</span>
               <div className="flex items-center gap-1.5">
                 <div className="flex gap-1">
@@ -549,34 +547,32 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
         {/* ============================================ */}
         {tab === 'p' && (
           <div className="space-y-6">
-            {/* Last draw + Next Jackpot - Side by side layout */}
+            {/* Last draw + Next Jackpot — compact on mobile */}
             {lastDraw && (
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {/* 3/4: Ultimo Sorteo */}
-                <div className="md:col-span-3 bg-gradient-to-r from-[#141414] to-[#1a1a1a] border border-white/5 rounded-2xl p-5 sm:p-6">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-400/20 to-emerald-500/20 flex items-center justify-center">
-                      <Target className="w-4 h-4 text-green-400" />
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 sm:gap-4">
+                {/* Ultimo Sorteo — single line on mobile */}
+                <div className="sm:col-span-3 bg-gradient-to-r from-[#141414] to-[#1a1a1a] border border-white/5 rounded-2xl p-4 sm:p-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-green-400/20 to-emerald-500/20 flex items-center justify-center">
+                      <Target className="w-3.5 h-3.5 text-green-400" />
                     </div>
                     <div>
-                      <h2 className="text-sm font-semibold text-white">Ultimo Sorteo</h2>
-                      <p className="text-[10px] text-gray-500 tracking-wider uppercase">#{dbStatus?.lastDrawNumber || '---'} · {lastDraw.date}</p>
+                      <h2 className="text-xs sm:text-sm font-semibold text-white">Ultimo Sorteo</h2>
+                      <p className="text-[9px] sm:text-[10px] text-gray-500 tracking-wider">#{dbStatus?.lastDrawNumber || '---'} · {lastDraw.date}</p>
                     </div>
                   </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-[10px] text-gray-500 uppercase tracking-wider w-full mb-1">Numeros Ganadores</span>
+                  <div className="flex items-center gap-1 sm:gap-2 flex-wrap sm:flex-nowrap">
                     {lastDraw.numbers.map((n, i) => (
                       <div key={i} className="relative">
-                        <Ball n={n} hl />
+                        <Ball n={n} sm hl />
                       </div>
                     ))}
-                    <span className="text-gray-600 text-lg mx-1">+</span>
-                    <Ball n={lastDraw.bonus} bonus />
-                    <span className="text-[9px] text-orange-400/70 ml-0.5 uppercase tracking-wider">Bonus</span>
+                    <span className="text-gray-600 text-sm sm:text-lg mx-0.5">+</span>
+                    <Ball n={lastDraw.bonus} sm bonus />
                   </div>
                 </div>
                 {/* 1/4: Proximo Jackpot */}
-                <div className="md:col-span-1 bg-gradient-to-b from-yellow-500/[0.07] to-amber-500/[0.03] border border-yellow-500/15 rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center text-center gap-2">
+                <div className="sm:col-span-1 bg-gradient-to-b from-yellow-500/[0.07] to-amber-500/[0.03] border border-yellow-500/15 rounded-2xl p-3 sm:p-5 flex flex-row sm:flex-col items-center sm:justify-center text-center gap-2 sm:gap-2">
                   <Gift className="w-6 h-6 text-yellow-400" />
                   <span className="text-[9px] text-yellow-400/60 uppercase tracking-widest font-medium">Proximo Jackpot</span>
                   <span className="text-2xl font-black text-yellow-400 leading-tight" style={{ textShadow: '0 0 18px rgba(234,179,8,0.35)' }}>
@@ -593,47 +589,47 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
               </div>
             )}
 
-            {/* User numbers input for prize check — key forces re-creation on lottery switch */}
-            <div key={`prize-inputs-${lottery}`} className="bg-[#141414] border border-white/5 rounded-2xl p-5 sm:p-6">
-              <div className="flex items-center gap-2 mb-1">
+            {/* User numbers input for prize check — single line, compact on mobile */}
+            <div key={`prize-inputs-${lottery}`} className="bg-[#141414] border border-white/5 rounded-2xl p-4 sm:p-6">
+              <div className="flex items-center gap-2 mb-3">
                 <Ticket className="w-4 h-4 text-green-400" />
-                <h2 className="text-sm font-semibold text-white">Verifica tu Ticket — {cfg.name}</h2>
-                <div className={`px-2 py-0.5 rounded-md text-[9px] font-bold tracking-wider ml-auto ${lottery === 'lotto-649' ? 'bg-amber-500/20 text-amber-400' : 'bg-green-500/20 text-green-400'}`}>{cfg.numCount} NUMEROS</div>
+                <h2 className="text-sm font-semibold text-white">Verifica tu Ticket</h2>
+                <div className={`px-2 py-0.5 rounded-md text-[9px] font-bold tracking-wider ml-auto ${lottery === 'lotto-649' ? 'bg-amber-500/20 text-amber-400' : 'bg-green-500/20 text-green-400'}`}>{cfg.numCount} NUM</div>
               </div>
-              <p className={`text-xs font-bold mb-4 ${lottery === 'lotto-649' ? 'text-amber-400' : 'text-green-400'}`}>Ingresa {cfg.numCount} numeros de tu boleto ({cfg.name})</p>
-              <div className="flex flex-wrap gap-2.5 justify-center sm:justify-start mb-4" key={`prize-fields-${lottery}`}>
+              {/* Single line: all number inputs + bonus */}
+              <div className="flex items-center gap-1.5 sm:gap-2.5 mb-3" key={`prize-fields-${lottery}`}>
                 {Array.from({ length: cfg.numCount }, (_, i) => {
                   const val = prizeInputs[i] || '';
                   const num = parseInt(val);
                   const dup = num >= 1 && num <= cfg.maxNum && prizeInputs.filter((v, j) => j !== i && parseInt(v) === num).length > 0;
                   return (
-                    <div key={`${lottery}-pn${i}`} className="relative">
-                      <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-gray-600">N{i + 1}</span>
+                    <div key={`${lottery}-pn${i}`} className="relative flex-1 min-w-0">
                       <input type="number" min="1" max={cfg.maxNum} inputMode="numeric" placeholder="-" value={val}
                         onChange={e => setPrizeIn(i, e.target.value)}
-                        className={`w-12 h-12 sm:w-14 sm:h-14 text-center text-lg font-bold rounded-xl bg-white/5 border-2 transition-all ${dup ? 'border-red-500/60 text-red-400' : num > cfg.maxNum ? 'border-orange-500/60 text-orange-400' : val ? 'border-green-500/40 text-green-400' : 'border-white/10 text-gray-400'} focus:outline-none focus:border-green-400`} />
+                        className={`w-full h-11 sm:h-14 text-center text-sm sm:text-lg font-bold rounded-lg sm:rounded-xl bg-white/5 border-2 transition-all ${dup ? 'border-red-500/60 text-red-400' : num > cfg.maxNum ? 'border-orange-500/60 text-orange-400' : val ? 'border-green-500/40 text-green-400' : 'border-white/10 text-gray-400'} focus:outline-none focus:border-green-400`} />
                       {dup && <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />}
                     </div>
                   );
                 })}
+                {/* Separator */}
+                <span className="text-gray-600 text-lg mx-0.5 shrink-0">+</span>
                 {/* Bonus input */}
-                <div className="relative">
-                  <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-orange-500 font-semibold">BONUS</span>
+                <div className="relative flex-1 min-w-0 max-w-[3.5rem] sm:max-w-none">
                   <input type="number" min="1" max={cfg.maxNum} inputMode="numeric" placeholder="B" value={prizeBonus}
                     onChange={e => setPrizeBonusIn(e.target.value)}
-                    className={`w-12 h-12 sm:w-14 sm:h-14 text-center text-lg font-bold rounded-xl bg-orange-500/5 border-2 transition-all ${prizeBonus ? 'border-orange-500/60 text-orange-400' : 'border-orange-500/20 text-orange-400/40'} focus:outline-none focus:border-orange-400 ring-1 ring-orange-500/10`} />
+                    className={`w-full h-11 sm:h-14 text-center text-sm sm:text-lg font-bold rounded-lg sm:rounded-xl bg-orange-500/5 border-2 transition-all ${prizeBonus ? 'border-orange-500/60 text-orange-400' : 'border-orange-500/20 text-orange-400/40'} focus:outline-none focus:border-orange-400 ring-1 ring-orange-500/10`} />
                 </div>
               </div>
-              <p className="text-[10px] text-gray-600 mb-4">Opcional: Ingresa tu numero Bonus para comparacion directa. Si lo dejas vacio, se verifica automaticamente.</p>
-              <div className="flex flex-wrap gap-2.5">
+              <div className="flex items-center gap-2">
                 <button onClick={checkPrize} disabled={!prizeCanGo || !lastDraw}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-black font-semibold text-sm transition-all disabled:opacity-30">
-                  <Zap className="w-4 h-4" /> Verificar Premio
+                  className="flex items-center gap-1.5 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-black font-semibold text-xs sm:text-sm transition-all disabled:opacity-30 flex-shrink-0">
+                  <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Verificar
                 </button>
                 <button onClick={() => { setPrizeInputs(Array(cfg.numCount).fill('')); setPrizeBonus(''); setPrizeResult(null); }}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 text-sm transition-colors">
-                  <RotateCcw className="w-3.5 h-3.5" /> Limpiar
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 text-xs sm:text-sm transition-colors">
+                  <RotateCcw className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Limpiar
                 </button>
+                <span className="text-[9px] text-gray-600 ml-auto hidden sm:inline">Bonus opcional</span>
               </div>
             </div>
 
@@ -641,28 +637,28 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
             {prizeResult && lastDraw && (
               <div className="space-y-5">
                 {/* Visual comparison */}
-                <div className="bg-[#141414] border border-white/5 rounded-2xl p-5 sm:p-6">
-                  <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+                <div className="bg-[#141414] border border-white/5 rounded-2xl p-4 sm:p-6">
+                  <h3 className="text-xs sm:text-sm font-semibold text-white mb-3 flex items-center gap-2">
                     <Search className="w-4 h-4 text-blue-400" />
                     Comparacion con el Sorteo
                   </h3>
                   {/* Draw numbers */}
-                  <div className="mb-4">
-                    <span className="text-[10px] text-gray-500 uppercase tracking-wider mb-2 block">Sorteo #{dbStatus?.lastDrawNumber} — {lastDraw.date}</span>
-                    <div className="flex flex-wrap items-center gap-2">
+                  <div className="mb-3">
+                    <span className="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-wider mb-1.5 block">Sorteo #{dbStatus?.lastDrawNumber} — {lastDraw.date}</span>
+                    <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
                       {lastDraw.numbers.map((n, i) => {
                         const userNums = getNums(prizeInputs);
                         const isMatch = userNums?.includes(n);
                         return <Ball key={i} n={n} sm matched={isMatch} dim={!isMatch} />;
                       })}
-                      <span className="text-gray-600 text-lg mx-0.5">+</span>
+                      <span className="text-gray-600 text-sm sm:text-lg mx-0.5">+</span>
                       <Ball n={lastDraw.bonus} sm bonus matched={prizeResult.hasBonus} dim={!prizeResult.hasBonus} />
                     </div>
                   </div>
                   {/* User numbers */}
                   <div>
-                    <span className="text-[10px] text-gray-500 uppercase tracking-wider mb-2 block">Tu Boleto</span>
-                    <div className="flex flex-wrap gap-2">
+                    <span className="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-wider mb-1.5 block">Tu Boleto</span>
+                    <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
                       {getNums(prizeInputs)?.map((n, i) => {
                         const isMainMatch = lastDraw.numbers.includes(n);
                         const isBonusMatch = n === lastDraw.bonus;
@@ -670,7 +666,7 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
                       }) || prizeInputs.map((_, i) => <Ball key={i} n={0} sm dim />)}
                       {prizeBonus && (
                         <>
-                          <span className="text-gray-600 text-lg mx-0.5">+</span>
+                          <span className="text-gray-600 text-sm sm:text-lg mx-0.5">+</span>
                           <Ball n={parseInt(prizeBonus)} sm bonus matched={parseInt(prizeBonus) === lastDraw.bonus} dim={parseInt(prizeBonus) !== lastDraw.bonus} />
                         </>
                       )}
@@ -821,21 +817,21 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
         {/* ============================================ */}
         {tab === 'a' && (
           <div className="space-y-6">
-            <div key={`adn-inputs-${lottery}`} className="bg-[#141414] border border-white/5 rounded-2xl p-5 sm:p-6">
-              <div className="flex items-center gap-2 mb-1"><Gauge className="w-4 h-4 text-green-400" /><h2 className="text-sm font-semibold text-white">Ingresa tus {cfg.numCount} Numeros ({cfg.name})</h2></div>
-              <p className={`text-xs font-bold mb-4 ${lottery === 'lotto-649' ? 'text-amber-400' : 'text-green-400'}`}>Rango 1-{cfg.maxNum} · {cfg.numCount} numeros · Sin duplicados</p>
-              <div className="flex flex-wrap gap-2.5 justify-center sm:justify-start mb-5" key={`adn-fields-${lottery}`}>
+            <div key={`adn-inputs-${lottery}`} className="bg-[#141414] border border-white/5 rounded-2xl p-4 sm:p-6">
+              <div className="flex items-center gap-2 mb-1"><Gauge className="w-4 h-4 text-green-400" /><h2 className="text-sm font-semibold text-white">Analiza tus {cfg.numCount} Numeros</h2></div>
+              <p className={`text-xs font-bold mb-3 ${lottery === 'lotto-649' ? 'text-amber-400' : 'text-green-400'}`}>1-{cfg.maxNum} · {cfg.numCount} numeros · Sin duplicados</p>
+              <div className="flex items-center gap-1.5 sm:gap-2.5 mb-4" key={`adn-fields-${lottery}`}>
                 {Array.from({ length: cfg.numCount }, (_, i) => {
                   const val = inputs[i] || '';
                   const num = parseInt(val);
                   const dup = num >= 1 && num <= cfg.maxNum && inputs.filter((v, j) => j !== i && parseInt(v) === num).length > 0;
-                  return (<div key={`${lottery}-an${i}`} className="relative"><span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-gray-600">N{i + 1}</span><input type="number" min="1" max={cfg.maxNum} inputMode="numeric" placeholder="-" value={val} onChange={e => setIn(i, e.target.value)} className={`w-12 h-12 sm:w-14 sm:h-14 text-center text-lg font-bold rounded-xl bg-white/5 border-2 transition-all ${dup ? 'border-red-500/60 text-red-400' : num > cfg.maxNum ? 'border-orange-500/60 text-orange-400' : val ? 'border-green-500/40 text-green-400' : 'border-white/10 text-gray-400'} focus:outline-none focus:border-green-400`} />{dup && <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />}</div>);
+                  return (<div key={`${lottery}-an${i}`} className="relative flex-1 min-w-0"><input type="number" min="1" max={cfg.maxNum} inputMode="numeric" placeholder="-" value={val} onChange={e => setIn(i, e.target.value)} className={`w-full h-11 sm:h-14 text-center text-sm sm:text-lg font-bold rounded-lg sm:rounded-xl bg-white/5 border-2 transition-all ${dup ? 'border-red-500/60 text-red-400' : num > cfg.maxNum ? 'border-orange-500/60 text-orange-400' : val ? 'border-green-500/40 text-green-400' : 'border-white/10 text-gray-400'} focus:outline-none focus:border-green-400`} />{dup && <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />}</div>);
                 })}
               </div>
-              <div className="flex flex-wrap gap-2.5">
-                <button onClick={analyze} disabled={!canGo} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-green-500 hover:bg-green-400 text-black font-semibold text-sm transition-all disabled:opacity-30"><Zap className="w-4 h-4" /> Analizar ADN</button>
-                <button onClick={clearAll} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 text-sm transition-colors"><RotateCcw className="w-3.5 h-3.5" /> Limpiar</button>
-                <button onClick={verify} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 text-sm transition-colors"><Eye className="w-3.5 h-3.5" /> Verificar</button>
+              <div className="flex flex-wrap gap-2">
+                <button onClick={analyze} disabled={!canGo} className="flex items-center gap-1.5 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-green-500 hover:bg-green-400 text-black font-semibold text-xs sm:text-sm transition-all disabled:opacity-30"><Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Analizar</button>
+                <button onClick={clearAll} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 text-xs sm:text-sm transition-colors"><RotateCcw className="w-3 h-3.5" /> Limpiar</button>
+                <button onClick={verify} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 text-xs sm:text-sm transition-colors"><Eye className="w-3 h-3.5" /> Verificar</button>
               </div>
               {verifyResult && (<div className="mt-4 p-4 rounded-xl bg-white/5 border border-white/5"><div className="flex items-center gap-2 mb-2"><History className="w-4 h-4 text-orange-400" /><span className="text-sm font-semibold">Verificacion Rapida</span></div><div className="flex gap-3 text-sm">{Array.from({length: cfg.numCount - 2}, (_, i) => i + 3).map(c => (<span key={c} className={`px-2.5 py-1 rounded-lg ${verifyResult.summary[c] > 0 ? 'bg-orange-500/20 text-orange-400 font-bold' : 'bg-white/5 text-gray-600'}`}>{c}/{cfg.numCount}: {verifyResult.summary[c] || 0}</span>))}</div></div>)}
             </div>
@@ -871,9 +867,9 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
           <div className="space-y-5">
             <div className="bg-[#141414] border border-white/5 rounded-2xl p-5 sm:p-6">
               <div className="flex items-center gap-2 mb-1"><History className="w-4 h-4 text-orange-400" /><h2 className="text-sm font-semibold text-white">Verificador Historico</h2></div>
-              <p className="text-xs text-gray-500 mb-4">Verifica contra {dbStatus?.totalDraws?.toLocaleString() || '---'} sorteos principales</p>
-              <div className="flex flex-wrap gap-2.5 justify-center sm:justify-start mb-4">
-                {inputs.map((val, i) => (<input key={i} type="number" min="1" max={String(cfg.maxNum)} inputMode="numeric" placeholder={`N${i + 1}`} value={val} onChange={e => setIn(i, e.target.value)} className="w-12 h-12 text-center text-lg font-bold rounded-xl bg-white/5 border-2 border-white/10 text-gray-300 focus:outline-none focus:border-orange-400 transition-all" />))}
+              <p className="text-xs text-gray-500 mb-3">Verifica contra {dbStatus?.totalDraws?.toLocaleString() || '---'} sorteos</p>
+              <div className="flex items-center gap-1.5 sm:gap-2.5 mb-4">
+                {inputs.map((val, i) => (<input key={i} type="number" min="1" max={String(cfg.maxNum)} inputMode="numeric" placeholder="-" value={val} onChange={e => setIn(i, e.target.value)} className="flex-1 min-w-0 h-11 sm:h-12 text-center text-sm sm:text-lg font-bold rounded-lg sm:rounded-xl bg-white/5 border-2 border-white/10 text-gray-300 focus:outline-none focus:border-orange-400 transition-all" />))}
               </div>
               <button onClick={verify} disabled={!canGo} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-400 text-black font-semibold text-sm transition-all disabled:opacity-30">{verifying ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />} Verificar</button>
             </div>
@@ -909,7 +905,7 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
             {genLines.length > 0 && (
               <div className="bg-[#141414] border border-white/5 rounded-2xl p-5 sm:p-6">
                 <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-400" />{genLines.length} Lineas</h3>
-                <div className="space-y-2">{genLines.map((line, i) => (<div key={i} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-3 rounded-xl bg-white/3 hover:bg-white/5 transition-colors group"><span className="text-xs text-gray-600 font-mono w-6 shrink-0">{i + 1}.</span><div className="flex gap-2 flex-wrap">{line.numbers.map((n, j) => <Ball key={j} n={n} sm hl />)}</div><div className="flex items-center gap-2 sm:ml-auto shrink-0"><span className="text-xs font-bold text-green-400 font-mono">{line.score}%</span><button onClick={() => loadLine(line.numbers)} className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 transition-all"><Upload className="w-3 h-3" /></button><button onClick={() => copyLine(line.numbers)} className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 transition-all">{copiedIdx === line.numbers[0] ? <CheckCircle2 className="w-3 h-3 text-green-400" /> : <Copy className="w-3 h-3" />}</button></div></div>))}</div>
+                <div className="space-y-2">{genLines.map((line, i) => (<div key={i} className="flex items-center gap-2 p-3 rounded-xl bg-white/3 hover:bg-white/5 transition-colors group"><span className="text-[10px] sm:text-xs text-gray-600 font-mono w-5 shrink-0">{i + 1}.</span><div className="flex gap-1 sm:gap-2 flex-1 min-w-0 justify-center sm:justify-start">{line.numbers.map((n, j) => <Ball key={j} n={n} sm hl />)}</div><div className="flex items-center gap-1.5 sm:gap-2 shrink-0"><span className="text-[10px] sm:text-xs font-bold text-green-400 font-mono">{line.score}%</span><button onClick={() => loadLine(line.numbers)} className="p-1.5 rounded-lg bg-white/5 hover:bg-green-500/20 text-gray-400 hover:text-green-400 transition-all sm:opacity-0 sm:group-hover:opacity-100"><Upload className="w-3.5 h-3.5" /></button><button onClick={() => copyLine(line.numbers)} className="p-1.5 rounded-lg bg-white/5 hover:bg-green-500/20 text-gray-400 hover:text-green-400 transition-all sm:opacity-0 sm:group-hover:opacity-100">{copiedIdx === line.numbers[0] ? <CheckCircle2 className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}</button></div></div>))}</div>
               </div>
             )}
           </div>
