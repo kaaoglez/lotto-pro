@@ -842,7 +842,7 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
                   <div className="flex flex-col sm:flex-row items-center gap-6">
                     <DNAGauge score={analysis.dnaScore} isMasterpiece={analysis.isMasterpiece} />
                     <div className="flex-1 space-y-3">
-                      <div><p className="text-[10px] tracking-widest text-gray-500 uppercase mb-1.5">Tu Combinacion</p><div className="flex gap-2 flex-wrap">{analysis.numbers.map((n, i) => <Ball key={i} n={n} hl={analysis.isMasterpiece} />)}</div></div>
+                      <div><p className="text-[10px] tracking-widest text-gray-500 uppercase mb-1.5">Tu Combinacion</p><div className="flex gap-1 sm:gap-2 flex-nowrap overflow-x-auto">{analysis.numbers.map((n, i) => <Ball key={i} n={n} hl={analysis.isMasterpiece} sm />)}</div></div>
                       <div className="flex items-start gap-2 p-3 rounded-xl bg-white/5"><Trophy className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" /><p className="text-xs text-gray-400">{analysis.repeatInfo}</p></div>
                       <p className="text-[10px] text-gray-600">Ultimo sorteo: {analysis.lastDrawDate} · Bonus: {analysis.bonusNumber}</p>
                     </div>
