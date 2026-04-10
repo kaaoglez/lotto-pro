@@ -1,0 +1,63 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: #0a0a0a;
+  --color-foreground: #f0f0f0;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-card: #141414;
+  --color-card-foreground: #f0f0f0;
+  --color-popover: #1a1a1a;
+  --color-popover-foreground: #f0f0f0;
+  --color-primary: #22c55e;
+  --color-primary-foreground: #0a0a0a;
+  --color-secondary: #1e1e1e;
+  --color-secondary-foreground: #f0f0f0;
+  --color-muted: #1a1a1a;
+  --color-muted-foreground: #737373;
+  --color-accent: #1e1e1e;
+  --color-accent-foreground: #f0f0f0;
+  --color-destructive: #ef4444;
+  --color-border: #262626;
+  --color-input: #262626;
+  --color-ring: #22c55e;
+  --radius: 0.625rem;
+  --color-sidebar-ring: #262626;
+  --color-sidebar-border: #262626;
+  --color-sidebar-accent: #1e1e1e;
+  --color-sidebar-accent-foreground: #f0f0f0;
+  --color-sidebar-primary: #22c55e;
+  --color-sidebar-primary-foreground: #0a0a0a;
+  --color-sidebar-foreground: #f0f0f0;
+  --color-sidebar: #141414;
+  --color-chart-1: #22c55e;
+  --color-chart-2: #f97316;
+  --color-chart-3: #3b82f6;
+  --color-chart-4: #a855f7;
+  --color-chart-5: #eab308;
+}
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  body { @apply bg-background text-foreground; }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
+
+/* Number input remove spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"] { -moz-appearance: textfield; }
+
+/* Neon glow utilities */
+.glow-green { box-shadow: 0 0 15px rgba(34, 197, 94, 0.3), 0 0 40px rgba(34, 197, 94, 0.1); }
+.glow-orange { box-shadow: 0 0 15px rgba(249, 115, 22, 0.3), 0 0 40px rgba(249, 115, 22, 0.1); }
+.text-glow-green { text-shadow: 0 0 10px rgba(34, 197, 94, 0.6), 0 0 30px rgba(34, 197, 94, 0.3); }
+.text-glow-orange { text-shadow: 0 0 10px rgba(249, 115, 22, 0.6), 0 0 30px rgba(249, 115, 22, 0.3); }
