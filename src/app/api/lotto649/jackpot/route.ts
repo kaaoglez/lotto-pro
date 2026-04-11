@@ -86,19 +86,42 @@ async function getLastDrawDate(): Promise<string> {
 async function scrape649(): Promise<{ amount: number; source: string }> {
   const sources = [
     {
+      url: 'https://www.olg.ca/en/lottery/play-lotto-649-encore/about.html',
+      // Matches "GOLD BALL $26 MILLION" or "$26 MILLION" near "Next jackpot"
+      patterns: [
+        /GOLD\s+BALL\s+\$(\d+)\s+MILLION/i,
+        /\$(\d+)\s+MILLION\s+Or\s+\$1\s+Million/i,
+        /Next\s+jackpot.{0,20}?\$(\d+)\s+MILLION/i,
+      ],
+      name: 'OLG (Gold Ball)',
+      multiplier: 1_000_000,
+    },
+    {
+      url: 'https://www.olg.ca/en/lottery/play-lotto-649-encore/past-results.html',
+      patterns: [
+        /NEXT\s+GOLD\s+BALL\s+JACKPOT:\s+\$(\d+(?:,\d{3})+)/i,
+        /GOLD\s+BALL\s+\$(\d+)\s+MILLION/i,
+      ],
+      name: 'OLG Past Results',
+      multiplier: 1_000_000,
+    },
+    {
       url: 'https://www.sasklotteries.ca/games/lotto-6-49',
-      pattern: /LOTTO\s+6\/49\s+\$(\d+(?:\.\d+)?)\s+Million/i,
+      patterns: [/LOTTO\s+6\/49\s+\$(\d+(?:\.\d+)?)\s+Million/i],
       name: 'SaskLotteries',
+      multiplier: 1_000_000,
     },
     {
       url: 'https://www.alc.ca/content/alc/en/our-games/lotto/lotto-649.html',
-      pattern: /(?:6\/49|649).{0,50}?\$(\d{1,3}(?:,\d{3})+)/i,
+      patterns: [/(?:6\/49|649).{0,50}?\$(\d{1,3}(?:,\d{3})+)/i],
       name: 'ALC',
+      multiplier: 1,
     },
     {
       url: 'https://www.lottonumbers.com/canada/6-49',
-      pattern: /jackpot.{0,30}?\$(\d+(?:\.\d+)?)\s*(?:million|M)/i,
+      patterns: [/jackpot.{0,30}?\$(\d+(?:\.\d+)?)\s*(?:million|M)/i],
       name: 'lottonumbers.com',
+      multiplier: 1_000_000,
     },
   ];
 
@@ -106,24 +129,28 @@ async function scrape649(): Promise<{ amount: number; source: string }> {
     try {
       const r = await fetch(src.url, {
         headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', 'Accept': 'text/html' },
-        signal: AbortSignal.timeout(8000),
+        signal: AbortSignal.timeout(10000),
       });
       if (!r.ok) continue;
       const text = cleanHTML(await r.text());
-      const m = text.match(src.pattern);
-      if (m) {
-        let amount: number;
-        if (m[1].includes(',')) {
-          amount = parseInt(m[1].replace(/,/g, ''));
-        } else {
-          amount = Math.round(parseFloat(m[1]) * 1_000_000);
-        }
-        if (amount >= 1_000_000 && amount <= 100_000_000) {
-          console.log(`[jackpot-649] ${src.name}: $${amount.toLocaleString()}`);
-          return { amount, source: src.name };
+
+      for (const pattern of src.patterns) {
+        const m = text.match(pattern);
+        if (m) {
+          let amount: number;
+          const raw = m[1];
+          if (raw.includes(',')) {
+            amount = parseInt(raw.replace(/,/g, ''));
+          } else {
+            amount = Math.round(parseFloat(raw) * src.multiplier);
+          }
+          if (amount >= 1_000_000 && amount <= 100_000_000) {
+            console.log(`[jackpot-649] ${src.name}: $${amount.toLocaleString()} (raw: ${raw})`);
+            return { amount, source: src.name };
+          }
         }
       }
-    } catch (e) { console.log(`[jackpot-649] ${src.name}: ${String(e).substring(0, 60)}`); }
+    } catch (e) { console.log(`[jackpot-649] ${src.name}: ${String(e).substring(0, 80)}`); }
   }
 
   return { amount: 5_000_000, source: 'default ($5M base)' };
