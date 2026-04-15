@@ -604,15 +604,9 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
         {/* ============================================ */}
         {tab === 'p' && (
           <div className="space-y-6">
-            {/* Compute draws from the last 5 days */}
+            {/* Compute last 5 draws */}
             {(() => {
-              const now = new Date();
-              const fiveDaysAgo = new Date(now); fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
-              fiveDaysAgo.setHours(0, 0, 0, 0);
-              const last5DaysDraws = recentDraws.filter(rd => {
-                const d = new Date(rd.drawDate + 'T00:00:00');
-                return d >= fiveDaysAgo;
-              });
+              const last5DaysDraws = recentDraws.slice(0, 5);
               const hasMultiple = last5DaysDraws.length > 1;
               // Helper: format date for display (e.g. "25 Jun 2025" or "Mar 25 Jun 2025")
               const fmtDate = (dateStr: string) => {
@@ -638,7 +632,7 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
                               <h2 className="text-xs sm:text-sm font-semibold text-white">{hasMultiple ? t('prize.lastDraws') : t('prize.lastDraw')}</h2>
                             </div>
                             {hasMultiple && (
-                              <span className="text-[8px] px-1.5 py-0.5 rounded-md bg-green-500/10 text-green-400/70 font-medium tracking-wide">{t('prize.last5Days')}</span>
+                              <span className="text-[8px] px-1.5 py-0.5 rounded-md bg-green-500/10 text-green-400/70 font-medium tracking-wide">{t('prize.last5Draws')}</span>
                             )}
                           </div>
                         </div>

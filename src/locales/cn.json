@@ -16,7 +16,7 @@
   "prize": {
     "lastDraw": "最近开奖",
     "lastDraws": "近期开奖",
-    "last5Days": "近5天",
+    "last5Draws": "近5期",
     "recentDraws": "近期开奖",
     "nextJackpot": "下期头奖",
     "estimated": "* 预估值",

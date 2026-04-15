@@ -16,7 +16,7 @@
   "prize": {
     "lastDraw": "Último Sorteo",
     "lastDraws": "Últimos Sorteos",
-    "last5Days": "Últimos 5 días",
+    "last5Draws": "Últimos 5 sorteos",
     "recentDraws": "Sorteos Recientes",
     "nextJackpot": "Próximo Jackpot",
     "estimated": "* Estimado",
