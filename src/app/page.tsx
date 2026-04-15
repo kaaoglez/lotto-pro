@@ -614,13 +614,21 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
                 return d >= fiveDaysAgo;
               });
               const hasMultiple = last5DaysDraws.length > 1;
+              // Helper: format date for display (e.g. "25 Jun 2025" or "Mar 25 Jun 2025")
+              const fmtDate = (dateStr: string) => {
+                try {
+                  const d = new Date(dateStr + 'T00:00:00');
+                  const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+                  return `${days[d.getDay()]} ${d.getDate()}`;
+                } catch { return dateStr; }
+              };
               return (
                 <>
                   {/* Last draw(s) + Next Jackpot */}
                   {lastDraw && (
                     <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 sm:gap-4">
-                      {/* Último Sorteo — shows draws from last 5 days */}
-                      <div className="sm:col-span-3 bg-gradient-to-r from-[#141414] to-[#1a1a1a] border border-white/5 rounded-2xl p-4 sm:p-6">
+                      {/* Último Sorteo — shows draws from last 5 days, vertical on mobile */}
+                      <div className="sm:col-span-3 bg-gradient-to-r from-[#141414] to-[#1a1a1a] border border-white/5 rounded-2xl p-3 sm:p-6">
                         <div className="flex items-center gap-2 mb-3">
                           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-green-400/20 to-emerald-500/20 flex items-center justify-center">
                             <Target className="w-3.5 h-3.5 text-green-400" />
@@ -628,41 +636,32 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
                           <div className="flex items-center gap-2">
                             <div>
                               <h2 className="text-xs sm:text-sm font-semibold text-white">{hasMultiple ? t('prize.lastDraws') : t('prize.lastDraw')}</h2>
-                              <p className="text-[9px] sm:text-[10px] text-gray-500 tracking-wider">#{dbStatus?.lastDrawNumber || '---'} · {lastDraw.date}</p>
                             </div>
                             {hasMultiple && (
                               <span className="text-[8px] px-1.5 py-0.5 rounded-md bg-green-500/10 text-green-400/70 font-medium tracking-wide">{t('prize.last5Days')}</span>
                             )}
                           </div>
                         </div>
-                        {/* Most recent draw — prominent */}
-                        <div className={`flex items-center gap-1 sm:gap-2 flex-wrap sm:flex-nowrap p-2 rounded-xl ${hasMultiple ? 'bg-green-500/5 border border-green-500/10' : ''}`}>
-                          {lastDraw.numbers.map((n, i) => (
-                            <div key={i} className="relative">
-                              <Ball n={n} sm hl />
+                        {/* All draws from last 5 days — vertical layout (date on top, balls below) */}
+                        <div className="space-y-2">
+                          {last5DaysDraws.map((rd, idx) => (
+                            <div key={rd.drawNumber} className={`p-2 rounded-xl ${idx === 0 ? 'bg-green-500/5 border border-green-500/10' : 'hover:bg-white/[0.03]'}`}>
+                              {/* Date line — on top */}
+                              <div className="flex items-center gap-1.5 mb-1.5">
+                                <span className={`text-[10px] sm:text-xs font-bold ${idx === 0 ? 'text-green-400/70' : 'text-gray-500'}`}>#{rd.drawNumber}</span>
+                                <span className="text-[9px] sm:text-[10px] text-gray-600">·</span>
+                                <span className={`text-[10px] sm:text-xs font-medium ${idx === 0 ? 'text-green-300/60' : 'text-gray-500'}`}>{fmtDate(rd.drawDate)}</span>
+                                <span className="text-[9px] sm:text-[10px] text-gray-700 ml-auto">{rd.drawDate}</span>
+                              </div>
+                              {/* Balls line — below */}
+                              <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
+                                {rd.numbers.map((n, i) => <Ball key={i} n={n} sm hl={idx === 0} />)}
+                                <span className="text-gray-600 text-xs sm:text-sm mx-0.5">+</span>
+                                <Ball n={rd.bonus} sm bonus />
+                              </div>
                             </div>
                           ))}
-                          <span className="text-gray-600 text-sm sm:text-lg mx-0.5">+</span>
-                          <Ball n={lastDraw.bonus} sm bonus />
                         </div>
-                        {/* Additional draws from last 5 days */}
-                        {hasMultiple && (
-                          <div className="mt-2 space-y-1.5">
-                            {last5DaysDraws.slice(1).map((rd, idx) => (
-                              <div key={rd.drawNumber} className="flex items-center gap-2 sm:gap-3 p-2 rounded-lg hover:bg-white/[0.03] transition-colors">
-                                <div className="min-w-[70px] sm:min-w-[90px]">
-                                  <span className="text-[10px] sm:text-xs font-bold text-gray-500">#{rd.drawNumber}</span>
-                                  <span className="text-[9px] sm:text-[10px] text-gray-600 ml-1">{rd.drawDate}</span>
-                                </div>
-                                <div className="flex gap-0.5 sm:gap-1 flex-1 flex-wrap sm:flex-nowrap justify-center sm:justify-start">
-                                  {rd.numbers.map((n, i) => <Ball key={i} n={n} sm />)}
-                                  <span className="text-gray-600 text-xs sm:text-sm mx-0.5">+</span>
-                                  <Ball n={rd.bonus} sm bonus />
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
                       </div>
                       {/* Proximo Jackpot */}
                       <div className="sm:col-span-1 bg-gradient-to-b from-yellow-500/[0.07] to-amber-500/[0.03] border border-yellow-500/15 rounded-2xl p-3 sm:p-5 flex flex-row sm:flex-col items-center sm:justify-center text-center gap-2 sm:gap-2">
