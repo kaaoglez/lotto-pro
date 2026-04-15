@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import { I18nProvider } from "@/lib/i18n";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -44,8 +45,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0a0a0a] text-gray-100`}>
-        {children}
-        <Toaster theme="dark" position="top-left" richColors closeButton style={{ top: '6rem' }} />
+        <I18nProvider>{children}</I18nProvider>
+        <Toaster theme="dark" position="top-left" richColors closeButton style={{ top: '5rem' }} />
         {/* Service Worker Registration */}
         <script
           dangerouslySetInnerHTML={{
