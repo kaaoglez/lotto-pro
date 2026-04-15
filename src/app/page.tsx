@@ -6,7 +6,7 @@ import {
   Gauge, Dna, History, Sparkles, Upload, AlertTriangle,
   CheckCircle2, XCircle, Loader2, Zap, Trophy, RotateCcw, Copy, Eye, Search,
   Database, Plus, Calendar, Save, Info, Ticket, Star, CircleDollarSign, Gift, Target, Download, RefreshCw,
-  Globe
+  Globe, Snowflake
 } from 'lucide-react';
 import { fetchBCLCClient, clearCache } from '@/lib/bclc-client';
 import { useI18n } from '@/lib/i18n';
@@ -608,6 +608,25 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
             {(() => {
               const last5DaysDraws = recentDraws.slice(0, 5);
               const hasMultiple = last5DaysDraws.length > 1;
+              // Compute hot numbers from last 15 draws
+              const hotNums: { n: number; freq: number }[] = [];
+              const freqMap: Record<number, number> = {};
+              for (let i = 0; i < Math.min(15, recentDraws.length); i++) {
+                for (const n of recentDraws[i].numbers) freqMap[n] = (freqMap[n] || 0) + 1;
+              }
+              for (const [n, f] of Object.entries(freqMap)) hotNums.push({ n: parseInt(n), freq: f });
+              hotNums.sort((a, b) => b.freq - a.freq);
+              const topHot = hotNums.slice(0, 4);
+              const topCold = hotNums.filter(h => !topHot.includes(h)).slice(-3).reverse();
+              // Format next draw date
+              const fmtNextDraw = (dateStr: string) => {
+                try {
+                  const d = new Date(dateStr + 'T00:00:00');
+                  const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+                  const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+                  return `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`;
+                } catch { return dateStr; }
+              };
               // Helper: format date for display (e.g. "25 Jun 2025" or "Mar 25 Jun 2025")
               const fmtDate = (dateStr: string) => {
                 try {
@@ -657,20 +676,63 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
                           ))}
                         </div>
                       </div>
-                      {/* Proximo Jackpot */}
-                      <div className="sm:col-span-1 bg-gradient-to-b from-yellow-500/[0.07] to-amber-500/[0.03] border border-yellow-500/15 rounded-2xl p-3 sm:p-5 flex flex-row sm:flex-col items-center sm:justify-center text-center gap-2 sm:gap-2">
-                        <Gift className="w-6 h-6 text-yellow-400" />
-                        <span className="text-[9px] text-yellow-400/60 uppercase tracking-widest font-medium">{t('prize.nextJackpot')}</span>
-                        <span className="text-2xl font-black text-yellow-400 leading-tight" style={{ textShadow: '0 0 18px rgba(234,179,8,0.35)' }}>
-                          {jackpot ? jackpot.formatted : '...'}
-                        </span>
-                        {jackpot?.nextDrawDate && (
-                          <div className="flex items-center gap-1 mt-1">
-                            <Calendar className="w-3 h-3 text-yellow-400/50" />
-                            <span className="text-[9px] text-gray-400 font-medium">{jackpot.nextDrawDate}</span>
+                      {/* Info Panel — Jackpot + Hot/Cold Numbers */}
+                      <div className="sm:col-span-1 space-y-3">
+                        {/* Jackpot */}
+                        <div className="bg-gradient-to-b from-yellow-500/[0.07] to-amber-500/[0.03] border border-yellow-500/15 rounded-2xl p-3 sm:p-4 flex flex-col items-center text-center gap-1.5">
+                          <Gift className="w-5 h-5 text-yellow-400" />
+                          <span className="text-[8px] text-yellow-400/60 uppercase tracking-widest font-medium">{t('prize.nextJackpot')}</span>
+                          <span className="text-xl sm:text-2xl font-black text-yellow-400 leading-tight" style={{ textShadow: '0 0 18px rgba(234,179,8,0.35)' }}>
+                            {jackpot ? jackpot.formatted : '...'}
+                          </span>
+                          {jackpot?.nextDrawDate && (
+                            <div className="flex items-center gap-1">
+                              <Calendar className="w-3 h-3 text-yellow-400/50" />
+                              <span className="text-[10px] text-gray-300 font-medium">{fmtNextDraw(jackpot.nextDrawDate)}</span>
+                            </div>
+                          )}
+                          <span className="text-[7px] text-gray-600">{t('prize.estimated')}</span>
+                        </div>
+                        {/* Hot Numbers */}
+                        {topHot.length > 0 && (
+                          <div className="bg-gradient-to-b from-orange-500/[0.06] to-red-500/[0.03] border border-orange-500/10 rounded-2xl p-3">
+                            <div className="flex items-center gap-1.5 mb-2 justify-center">
+                              <Zap className="w-3 h-3 text-orange-400" />
+                              <span className="text-[8px] text-orange-400/80 uppercase tracking-widest font-medium">{t('prize.hotNumbers')}</span>
+                            </div>
+                            <div className="flex justify-center gap-1.5">
+                              {topHot.map((h, i) => (
+                                <span key={h.n} className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400/20 to-red-500/15 border border-orange-500/20 flex items-center justify-center text-xs font-bold text-orange-300 tabular-nums">
+                                  {h.n}
+                                </span>
+                              ))}
+                            </div>
                           </div>
                         )}
-                        <span className="text-[8px] text-gray-600 mt-auto">{t('prize.estimated')}</span>
+                        {/* Cold Numbers */}
+                        {topCold.length > 0 && (
+                          <div className="bg-gradient-to-b from-cyan-500/[0.05] to-blue-500/[0.02] border border-cyan-500/10 rounded-2xl p-3">
+                            <div className="flex items-center gap-1.5 mb-2 justify-center">
+                              <Snowflake className="w-3 h-3 text-cyan-400" />
+                              <span className="text-[8px] text-cyan-400/80 uppercase tracking-widest font-medium">{t('prize.coldNumbers')}</span>
+                            </div>
+                            <div className="flex justify-center gap-1.5">
+                              {topCold.map((c, i) => (
+                                <span key={c.n} className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400/15 to-blue-500/10 border border-cyan-500/15 flex items-center justify-center text-xs font-bold text-cyan-300/70 tabular-nums">
+                                  {c.n}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {/* Odds */}
+                        <div className="bg-[#141414] border border-white/5 rounded-2xl p-3 flex items-center gap-2">
+                          <Target className="w-3.5 h-3.5 text-gray-500 shrink-0" />
+                          <div className="text-center w-full">
+                            <span className="text-[8px] text-gray-500 uppercase tracking-wider block">{t('prize.jackpotOdds')}</span>
+                            <span className="text-[11px] font-bold text-gray-300 tabular-nums">1 en {lottery === 'lotto-max' ? '33,294,800' : '13,983,816'}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
