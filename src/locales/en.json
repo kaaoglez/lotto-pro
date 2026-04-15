@@ -15,6 +15,9 @@
   },
   "prize": {
     "lastDraw": "Last Draw",
+    "lastDraws": "Last Draws",
+    "last5Days": "Last 5 days",
+    "recentDraws": "Recent Draws",
     "nextJackpot": "Next Jackpot",
     "estimated": "* Estimated",
     "verifyTicket": "Check Your Ticket",

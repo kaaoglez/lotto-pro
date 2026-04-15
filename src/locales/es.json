@@ -15,6 +15,9 @@
   },
   "prize": {
     "lastDraw": "Último Sorteo",
+    "lastDraws": "Últimos Sorteos",
+    "last5Days": "Últimos 5 días",
+    "recentDraws": "Sorteos Recientes",
     "nextJackpot": "Próximo Jackpot",
     "estimated": "* Estimado",
     "verifyTicket": "Verifica tu Ticket",

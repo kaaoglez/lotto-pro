@@ -604,72 +604,86 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
         {/* ============================================ */}
         {tab === 'p' && (
           <div className="space-y-6">
-            {/* Last draw + Next Jackpot — compact on mobile */}
-            {lastDraw && (
-              <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 sm:gap-4">
-                {/* Ultimo Sorteo — single line on mobile */}
-                <div className="sm:col-span-3 bg-gradient-to-r from-[#141414] to-[#1a1a1a] border border-white/5 rounded-2xl p-4 sm:p-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-green-400/20 to-emerald-500/20 flex items-center justify-center">
-                      <Target className="w-3.5 h-3.5 text-green-400" />
-                    </div>
-                    <div>
-                      <h2 className="text-xs sm:text-sm font-semibold text-white">{t('prize.lastDraw')}</h2>
-                      <p className="text-[9px] sm:text-[10px] text-gray-500 tracking-wider">#{dbStatus?.lastDrawNumber || '---'} · {lastDraw.date}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 sm:gap-2 flex-wrap sm:flex-nowrap">
-                    {lastDraw.numbers.map((n, i) => (
-                      <div key={i} className="relative">
-                        <Ball n={n} sm hl />
+            {/* Compute draws from the last 5 days */}
+            {(() => {
+              const now = new Date();
+              const fiveDaysAgo = new Date(now); fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
+              fiveDaysAgo.setHours(0, 0, 0, 0);
+              const last5DaysDraws = recentDraws.filter(rd => {
+                const d = new Date(rd.drawDate + 'T00:00:00');
+                return d >= fiveDaysAgo;
+              });
+              const hasMultiple = last5DaysDraws.length > 1;
+              return (
+                <>
+                  {/* Last draw(s) + Next Jackpot */}
+                  {lastDraw && (
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 sm:gap-4">
+                      {/* Último Sorteo — shows draws from last 5 days */}
+                      <div className="sm:col-span-3 bg-gradient-to-r from-[#141414] to-[#1a1a1a] border border-white/5 rounded-2xl p-4 sm:p-6">
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-green-400/20 to-emerald-500/20 flex items-center justify-center">
+                            <Target className="w-3.5 h-3.5 text-green-400" />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div>
+                              <h2 className="text-xs sm:text-sm font-semibold text-white">{hasMultiple ? t('prize.lastDraws') : t('prize.lastDraw')}</h2>
+                              <p className="text-[9px] sm:text-[10px] text-gray-500 tracking-wider">#{dbStatus?.lastDrawNumber || '---'} · {lastDraw.date}</p>
+                            </div>
+                            {hasMultiple && (
+                              <span className="text-[8px] px-1.5 py-0.5 rounded-md bg-green-500/10 text-green-400/70 font-medium tracking-wide">{t('prize.last5Days')}</span>
+                            )}
+                          </div>
+                        </div>
+                        {/* Most recent draw — prominent */}
+                        <div className={`flex items-center gap-1 sm:gap-2 flex-wrap sm:flex-nowrap p-2 rounded-xl ${hasMultiple ? 'bg-green-500/5 border border-green-500/10' : ''}`}>
+                          {lastDraw.numbers.map((n, i) => (
+                            <div key={i} className="relative">
+                              <Ball n={n} sm hl />
+                            </div>
+                          ))}
+                          <span className="text-gray-600 text-sm sm:text-lg mx-0.5">+</span>
+                          <Ball n={lastDraw.bonus} sm bonus />
+                        </div>
+                        {/* Additional draws from last 5 days */}
+                        {hasMultiple && (
+                          <div className="mt-2 space-y-1.5">
+                            {last5DaysDraws.slice(1).map((rd, idx) => (
+                              <div key={rd.drawNumber} className="flex items-center gap-2 sm:gap-3 p-2 rounded-lg hover:bg-white/[0.03] transition-colors">
+                                <div className="min-w-[70px] sm:min-w-[90px]">
+                                  <span className="text-[10px] sm:text-xs font-bold text-gray-500">#{rd.drawNumber}</span>
+                                  <span className="text-[9px] sm:text-[10px] text-gray-600 ml-1">{rd.drawDate}</span>
+                                </div>
+                                <div className="flex gap-0.5 sm:gap-1 flex-1 flex-wrap sm:flex-nowrap justify-center sm:justify-start">
+                                  {rd.numbers.map((n, i) => <Ball key={i} n={n} sm />)}
+                                  <span className="text-gray-600 text-xs sm:text-sm mx-0.5">+</span>
+                                  <Ball n={rd.bonus} sm bonus />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    ))}
-                    <span className="text-gray-600 text-sm sm:text-lg mx-0.5">+</span>
-                    <Ball n={lastDraw.bonus} sm bonus />
-                  </div>
-                </div>
-                {/* 1/4: Proximo Jackpot */}
-                <div className="sm:col-span-1 bg-gradient-to-b from-yellow-500/[0.07] to-amber-500/[0.03] border border-yellow-500/15 rounded-2xl p-3 sm:p-5 flex flex-row sm:flex-col items-center sm:justify-center text-center gap-2 sm:gap-2">
-                  <Gift className="w-6 h-6 text-yellow-400" />
-                  <span className="text-[9px] text-yellow-400/60 uppercase tracking-widest font-medium">{t('prize.nextJackpot')}</span>
-                  <span className="text-2xl font-black text-yellow-400 leading-tight" style={{ textShadow: '0 0 18px rgba(234,179,8,0.35)' }}>
-                    {jackpot ? jackpot.formatted : '...'}
-                  </span>
-                  {jackpot?.nextDrawDate && (
-                    <div className="flex items-center gap-1 mt-1">
-                      <Calendar className="w-3 h-3 text-yellow-400/50" />
-                      <span className="text-[9px] text-gray-400 font-medium">{jackpot.nextDrawDate}</span>
+                      {/* Proximo Jackpot */}
+                      <div className="sm:col-span-1 bg-gradient-to-b from-yellow-500/[0.07] to-amber-500/[0.03] border border-yellow-500/15 rounded-2xl p-3 sm:p-5 flex flex-row sm:flex-col items-center sm:justify-center text-center gap-2 sm:gap-2">
+                        <Gift className="w-6 h-6 text-yellow-400" />
+                        <span className="text-[9px] text-yellow-400/60 uppercase tracking-widest font-medium">{t('prize.nextJackpot')}</span>
+                        <span className="text-2xl font-black text-yellow-400 leading-tight" style={{ textShadow: '0 0 18px rgba(234,179,8,0.35)' }}>
+                          {jackpot ? jackpot.formatted : '...'}
+                        </span>
+                        {jackpot?.nextDrawDate && (
+                          <div className="flex items-center gap-1 mt-1">
+                            <Calendar className="w-3 h-3 text-yellow-400/50" />
+                            <span className="text-[9px] text-gray-400 font-medium">{jackpot.nextDrawDate}</span>
+                          </div>
+                        )}
+                        <span className="text-[8px] text-gray-600 mt-auto">{t('prize.estimated')}</span>
+                      </div>
                     </div>
                   )}
-                  <span className="text-[8px] text-gray-600 mt-auto">{t('prize.estimated')}</span>
-                </div>
-              </div>
-            )}
-
-            {/* Recent Draws List (last 5) */}
-            {recentDraws.length > 1 && (
-              <div className="bg-[#141414] border border-white/5 rounded-2xl p-4 sm:p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <History className="w-4 h-4 text-gray-400" />
-                  <h3 className="text-xs sm:text-sm font-semibold text-white">{t('prize.recentDraws')}</h3>
-                </div>
-                <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {recentDraws.slice(0, 5).map((rd, idx) => (
-                    <div key={rd.drawNumber} className={`flex items-center gap-2 sm:gap-3 p-2 rounded-lg transition-colors ${idx === 0 ? 'bg-green-500/5 border border-green-500/10' : 'hover:bg-white/3'}`}>
-                      <div className="min-w-[80px] sm:min-w-[100px]">
-                        <span className="text-[10px] sm:text-xs font-bold text-gray-500">#{rd.drawNumber}</span>
-                        <span className="text-[9px] sm:text-[10px] text-gray-600 ml-1">{rd.drawDate}</span>
-                      </div>
-                      <div className="flex gap-0.5 sm:gap-1 flex-1 flex-wrap sm:flex-nowrap justify-center sm:justify-start">
-                        {rd.numbers.map((n, i) => <Ball key={i} n={n} sm hl={idx === 0} />)}
-                        <span className="text-gray-600 text-xs sm:text-sm mx-0.5">+</span>
-                        <Ball n={rd.bonus} sm bonus />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+                </>
+              );
+            })()}
 
             {/* User numbers input for prize check — single line, compact on mobile */}
             <div key={`prize-inputs-${lottery}`} className="bg-[#141414] border border-white/5 rounded-2xl p-4 sm:p-6">

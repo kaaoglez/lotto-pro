@@ -28,6 +28,7 @@ export async function GET() {
       totalMainDraws: draws.length,
       dateRange: { start: draws[draws.length - 1]?.drawDate || '', end: draws[0]?.drawDate || '' },
       lastDraw: draws[0],
+      recentDraws: draws.slice(0, 30),
       numberFrequency, bonusFrequency, topHotNumbers: topHot, topColdNumbers: topCold,
       consecutiveStats: { withPairs, withTriples, percentWithPair: +(withPairs / draws.length * 100).toFixed(1) },
       oddEvenStats,
