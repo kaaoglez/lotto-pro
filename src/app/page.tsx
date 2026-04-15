@@ -730,7 +730,7 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
                           <Target className="w-3.5 h-3.5 text-gray-500 shrink-0" />
                           <div className="text-center w-full">
                             <span className="text-[8px] text-gray-500 uppercase tracking-wider block">{t('prize.jackpotOdds')}</span>
-                            <span className="text-[11px] font-bold text-gray-300 tabular-nums">1 en {lottery === 'lotto-max' ? '33,294,800' : '13,983,816'}</span>
+                            <span className="text-[11px] font-bold text-gray-300 tabular-nums">{t('prize.oddsFormat', { odds: lottery === 'lotto-max' ? '33,294,800' : '13,983,816' })}</span>
                           </div>
                         </div>
                       </div>

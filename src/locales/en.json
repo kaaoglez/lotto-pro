@@ -20,6 +20,7 @@
     "hotNumbers": "Hot Numbers",
     "coldNumbers": "Cold Numbers",
     "jackpotOdds": "Jackpot Odds",
+    "oddsFormat": "1 in {odds}",
     "recentDraws": "Recent Draws",
     "nextJackpot": "Next Jackpot",
     "estimated": "* Estimated",

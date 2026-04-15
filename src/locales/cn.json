@@ -20,6 +20,7 @@
     "hotNumbers": "热门号码",
     "coldNumbers": "冷门号码",
     "jackpotOdds": "头奖概率",
+    "oddsFormat": "1 比 {odds}",
     "recentDraws": "近期开奖",
     "nextJackpot": "下期头奖",
     "estimated": "* 预估值",

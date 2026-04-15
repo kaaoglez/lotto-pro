@@ -20,6 +20,7 @@
     "hotNumbers": "Numéros Chauds",
     "coldNumbers": "Numéros Froids",
     "jackpotOdds": "Probabilité Jackpot",
+    "oddsFormat": "1 sur {odds}",
     "recentDraws": "Tirages Récents",
     "nextJackpot": "Prochain Jackpot",
     "estimated": "* Estimé",
