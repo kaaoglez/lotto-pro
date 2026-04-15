@@ -233,6 +233,7 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
   const [generating, setGenerating] = useState(false);
   const [genLines, setGenLines] = useState<GeneratedLine[]>([]);
   const [lastDraw, setLastDraw] = useState<{ date: string; numbers: number[]; bonus: number } | null>(null);
+  const [recentDraws, setRecentDraws] = useState<{ drawNumber: number; drawDate: string; numbers: number[]; bonus: number }[]>([]);
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   const [tab, setTab] = useState<TabKey>('p');
 
@@ -262,6 +263,12 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
         const d = await r.json();
         if (d?.lastDraw) {
           setLastDraw({ date: d.lastDraw.drawDate, numbers: d.lastDraw.numbers, bonus: d.lastDraw.bonus });
+          setRecentDraws((d.recentDraws || [d.lastDraw]).slice(0, 10).map((rd: any) => ({
+            drawNumber: rd.drawNumber || 0,
+            drawDate: rd.drawDate || rd.date || '',
+            numbers: rd.numbers || [],
+            bonus: rd.bonus,
+          })));
           setDbStatus({ totalDraws: d.totalMainDraws, lastDrawDate: d.lastDraw.drawDate, firstDrawDate: d.dateRange.start, lastDrawNumber: d.lastDraw.drawNumber });
           return;
         }
@@ -272,6 +279,12 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
         const draws = await fetchBCLCClient(lottery);
         if (draws.length > 0) {
           setLastDraw({ date: draws[0].drawDate, numbers: draws[0].numbers, bonus: draws[0].bonus });
+          setRecentDraws(draws.slice(0, 10).map(d => ({
+            drawNumber: d.drawNumber,
+            drawDate: d.drawDate,
+            numbers: d.numbers,
+            bonus: d.bonus,
+          })));
           setDbStatus({
             totalDraws: draws.length,
             lastDrawDate: draws[0].drawDate,
@@ -629,6 +642,31 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
                     </div>
                   )}
                   <span className="text-[8px] text-gray-600 mt-auto">{t('prize.estimated')}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Recent Draws List (last 5) */}
+            {recentDraws.length > 1 && (
+              <div className="bg-[#141414] border border-white/5 rounded-2xl p-4 sm:p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <History className="w-4 h-4 text-gray-400" />
+                  <h3 className="text-xs sm:text-sm font-semibold text-white">{t('prize.recentDraws')}</h3>
+                </div>
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {recentDraws.slice(0, 5).map((rd, idx) => (
+                    <div key={rd.drawNumber} className={`flex items-center gap-2 sm:gap-3 p-2 rounded-lg transition-colors ${idx === 0 ? 'bg-green-500/5 border border-green-500/10' : 'hover:bg-white/3'}`}>
+                      <div className="min-w-[80px] sm:min-w-[100px]">
+                        <span className="text-[10px] sm:text-xs font-bold text-gray-500">#{rd.drawNumber}</span>
+                        <span className="text-[9px] sm:text-[10px] text-gray-600 ml-1">{rd.drawDate}</span>
+                      </div>
+                      <div className="flex gap-0.5 sm:gap-1 flex-1 flex-wrap sm:flex-nowrap justify-center sm:justify-start">
+                        {rd.numbers.map((n, i) => <Ball key={i} n={n} sm hl={idx === 0} />)}
+                        <span className="text-gray-600 text-xs sm:text-sm mx-0.5">+</span>
+                        <Ball n={rd.bonus} sm bonus />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
