@@ -60,6 +60,7 @@
     "detail": "Detail",
     "lastDraw": "Last draw",
     "masterpiece": "Masterpiece! DNA Score >= 85%",
+    "bonus": "Bonus",
     "gaugeMaster": "MASTER",
     "gaugeOk": "GOOD",
     "gaugeWeak": "WEAK"
