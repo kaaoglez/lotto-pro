@@ -338,7 +338,7 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
 
   const setIn = (i: number, v: string) => {
     const c = v.replace(/[^0-9]/g, '').slice(0, 2);
-    const n = [...inputs]; n[i] = c; setInputs(n); setAnalysis(null);
+    const n = [...inputs]; n[i] = c; setInputs(n); setAnalysis(null); setLastAnalyzedNums(null);
   };
   const setPrizeIn = (i: number, v: string) => {
     const c = v.replace(/[^0-9]/g, '').slice(0, 2);
@@ -349,18 +349,28 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
     setPrizeResult(null);
   };
 
-  const analyze = async () => {
-    const nums = getNums(inputs);
+  // Store last analyzed numbers so we can re-run analysis on locale change
+  const [lastAnalyzedNums, setLastAnalyzedNums] = useState<number[] | null>(null);
+
+  const analyze = async (numsOverride?: number[]) => {
+    const nums = numsOverride || getNums(inputs);
     if (!nums) { toast.error(t('toast.enterUniqueNums', { count: cfg.numCount, max: cfg.maxNum })); return; }
     setAnalysis(null);
+    setLastAnalyzedNums(nums);
     try {
       const r = await fetch(`${cfg.apiBase}/analyze`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ numbers: nums, locale }) });
-      const d: AnalysisResponse = await r.json();
+      const d = await r.json() as AnalysisResponse & { error?: string };
       if (d.error) { toast.error(d.error); return; }
       setAnalysis(d);
       if (d.isMasterpiece) toast.success(t('dna.masterpiece'), { duration: 5000 });
     } catch { toast.error(t('toast.connectionError')); }
   };
+
+  // Re-run analysis with new locale when language changes
+  useEffect(() => {
+    if (lastAnalyzedNums) analyze(lastAnalyzedNums);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locale]);
 
   const verify = async () => {
     const nums = getNums(inputs);
@@ -514,7 +524,7 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
 
   const loadLine = (nums: number[]) => { const n = Array(cfg.numCount).fill(''); for (let i = 0; i < cfg.numCount; i++) n[i] = String(nums[i]); setInputs(n); setAnalysis(null); toast.info(t('toast.lineLoaded')); };
   const copyLine = (nums: number[]) => { navigator.clipboard.writeText(nums.join(' - ')); setCopiedIdx(nums[0]); toast.success(t('toast.copied')); setTimeout(() => setCopiedIdx(null), 2000); };
-  const clearAll = () => { setInputs(Array(cfg.numCount).fill('')); setAnalysis(null); setVerifyResult(null); };
+  const clearAll = () => { setInputs(Array(cfg.numCount).fill('')); setAnalysis(null); setVerifyResult(null); setLastAnalyzedNums(null); };
   const canGo = inputs.every(s => s.length > 0);
   const prizeCanGo = prizeInputs.every(s => s.length > 0);
 
@@ -980,7 +990,7 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
                 })}
               </div>
               <div className="flex flex-wrap gap-2">
-                <button onClick={analyze} disabled={!canGo} className="flex items-center gap-1.5 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-green-500 hover:bg-green-400 text-black font-semibold text-xs sm:text-sm transition-all disabled:opacity-30"><Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('dna.analyze')}</button>
+                <button onClick={() => analyze()} disabled={!canGo} className="flex items-center gap-1.5 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-green-500 hover:bg-green-400 text-black font-semibold text-xs sm:text-sm transition-all disabled:opacity-30"><Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('dna.analyze')}</button>
                 <button onClick={clearAll} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 text-xs sm:text-sm transition-colors"><RotateCcw className="w-3 h-3.5" /> {t('prize.clear')}</button>
                 <button onClick={verify} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 text-xs sm:text-sm transition-colors"><Eye className="w-3 h-3.5" /> {t('prize.verify')}</button>
               </div>
