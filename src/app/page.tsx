@@ -628,19 +628,23 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
               hotNums.sort((a, b) => b.freq - a.freq);
               const topHot = hotNums.slice(0, 4);
               const topCold = hotNums.filter(h => !topHot.includes(h)).slice(-3).reverse();
-              // Format next draw date
+              // Format next draw date (handles "Tuesday, April 22, 2026" and "2026-04-22")
               const fmtNextDraw = (dateStr: string) => {
                 try {
-                  const d = new Date(dateStr + 'T00:00:00');
+                  // Strip day-of-week name if present (e.g. "Tuesday, " → remove)
+                  const cleaned = dateStr.replace(/^[A-Za-z]+,\s*/, '');
+                  const d = new Date(cleaned + 'T00:00:00');
+                  if (isNaN(d.getTime())) return dateStr;
                   const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
                   const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
                   return `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`;
                 } catch { return dateStr; }
               };
-              // Helper: format date for display (e.g. "25 Jun 2025" or "Mar 25 Jun 2025")
+              // Helper: format date for display (e.g. "Mar 25" from "2026-04-25")
               const fmtDate = (dateStr: string) => {
                 try {
                   const d = new Date(dateStr + 'T00:00:00');
+                  if (isNaN(d.getTime())) return dateStr;
                   const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
                   return `${days[d.getDay()]} ${d.getDate()}`;
                 } catch { return dateStr; }
