@@ -5,8 +5,8 @@ function evaluateDNA(numbers: number[]): { score: number; ok: boolean } {
   let score = 0;
 
   const sum = sorted.reduce((a, b) => a + b, 0);
-  if (sum >= 130 && sum <= 210) score += 20;
-  else if (sum >= 110 && sum <= 230) score += 10;
+  if (sum >= 150 && sum <= 220) score += 20;
+  else if (sum >= 130 && sum <= 240) score += 10;
 
   const evens = sorted.filter(n => n % 2 === 0).length;
   if (evens === 3 || evens === 4) score += 20;
@@ -15,8 +15,8 @@ function evaluateDNA(numbers: number[]): { score: number; ok: boolean } {
   const gaps: number[] = [];
   for (let i = 1; i < sorted.length; i++) gaps.push(sorted[i] - sorted[i - 1]);
   const avgGap = gaps.reduce((a, b) => a + b, 0) / gaps.length;
-  if (avgGap >= 5.0 && avgGap <= 9.0) score += 20;
-  else if (avgGap >= 4.0 && avgGap <= 10.0) score += 10;
+  if (avgGap >= 6.0 && avgGap <= 11.0) score += 20;
+  else if (avgGap >= 4.5 && avgGap <= 12.5) score += 10;
 
   let consecPairs = 0;
   for (let i = 1; i < sorted.length; i++) {
@@ -25,8 +25,8 @@ function evaluateDNA(numbers: number[]): { score: number; ok: boolean } {
   if (consecPairs <= 1) score += 20;
   else if (consecPairs === 2) score += 10;
 
-  const sectors = [0, 0, 0, 0, 0];
-  for (const n of sorted) sectors[Math.min(4, Math.floor((n - 1) / 10))]++;
+  const sectors = [0, 0, 0, 0, 0, 0];
+  for (const n of sorted) sectors[Math.min(5, Math.floor((n - 1) / 9))]++;
   const covered = sectors.filter(s => s > 0).length;
   if (covered >= 4) score += 20;
   else if (covered === 3) score += 8;
