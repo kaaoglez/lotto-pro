@@ -4,6 +4,11 @@ import { getMaxRuleName, getMaxRuleDetail, getNoneStr, getPairsStr, formatRepeat
 
 type Locale = 'es' | 'en' | 'fr' | 'cn';
 
+// Lotto Max: 7 numbers from 1-52
+// Expected sum: (1+52)/2 * 7 = 185.5
+// Expected avg gap: (52-1)/(7-1) = 8.5
+// Sectors: 6 sectors of ~9 numbers each (1-9, 10-18, 19-26, 27-35, 36-43, 44-52)
+
 export async function POST(request: Request) {
   try {
     const body = await request.json() as { numbers: number[]; locale?: string };
@@ -13,8 +18,8 @@ export async function POST(request: Request) {
     if (!numbers || numbers.length !== 7) {
       return NextResponse.json({ error: getErrorMessage(locale, 'exact_count', { count: 7 }) }, { status: 400 });
     }
-    if (numbers.some(n => n < 1 || n > 50)) {
-      return NextResponse.json({ error: getErrorMessage(locale, 'range', { max: 50 }) }, { status: 400 });
+    if (numbers.some(n => n < 1 || n > 52)) {
+      return NextResponse.json({ error: getErrorMessage(locale, 'range', { max: 52 }) }, { status: 400 });
     }
     if (new Set(numbers).size !== 7) {
       return NextResponse.json({ error: getErrorMessage(locale, 'unique') }, { status: 400 });
@@ -26,15 +31,16 @@ export async function POST(request: Request) {
     const rules: { name: string; value: string; status: 'ok' | 'warn' | 'fail'; detail: string }[] = [];
     let score = 0;
 
-    // 1. Suma Total (range 130-210)
+    // 1. Suma Total — expected ~186, ideal range 150-220
     const sum = sorted.reduce((a, b) => a + b, 0);
-    const sumOk = sum >= 130 && sum <= 210;
+    const sumOk = sum >= 150 && sum <= 220;
     if (sumOk) score += 20;
-    else if (sum >= 110 && sum <= 230) { score += 10; }
+    else if (sum >= 130 && sum <= 240) { score += 10; }
+    const sumStatus = sumOk ? 'ok' : (sum >= 130 && sum <= 240 ? 'warn' : 'fail');
     rules.push({
       name: getMaxRuleName(locale, 'sum'), value: String(sum),
-      status: sumOk ? 'ok' : (sum >= 110 && sum <= 230 ? 'warn' : 'fail'),
-      detail: getMaxRuleDetail(locale, 'sum', sumOk ? 'ok' : (sum >= 110 && sum <= 230 ? 'warn' : 'fail'), String(sum)),
+      status: sumStatus,
+      detail: getMaxRuleDetail(locale, 'sum', sumStatus, String(sum)),
     });
 
     // 2. Paridad (3/4 or 4/3)
@@ -44,23 +50,25 @@ export async function POST(request: Request) {
     const parityOk = (evens === 3 || evens === 4);
     if (parityOk) score += 20;
     else if (evens >= 2 && evens <= 5) { score += 10; }
+    const parityStatus = parityOk ? 'ok' : (evens >= 2 && evens <= 5 ? 'warn' : 'fail');
     rules.push({
       name: getMaxRuleName(locale, 'parity'), value: parityStr,
-      status: parityOk ? 'ok' : (evens >= 2 && evens <= 5 ? 'warn' : 'fail'),
-      detail: getMaxRuleDetail(locale, 'parity', parityOk ? 'ok' : (evens >= 2 && evens <= 5 ? 'warn' : 'fail'), parityStr),
+      status: parityStatus,
+      detail: getMaxRuleDetail(locale, 'parity', parityStatus, parityStr),
     });
 
-    // 3. Gaps / Saltos (ideal 5.0 - 9.0)
+    // 3. Gaps / Saltos — expected ~8.5, ideal range 6.0-11.0
     const gaps: number[] = [];
     for (let i = 1; i < sorted.length; i++) gaps.push(sorted[i] - sorted[i - 1]);
     const avgGap = gaps.reduce((a, b) => a + b, 0) / gaps.length;
-    const gapOk = avgGap >= 5.0 && avgGap <= 9.0;
+    const gapOk = avgGap >= 6.0 && avgGap <= 11.0;
     if (gapOk) score += 20;
-    else if (avgGap >= 4.0 && avgGap <= 10.0) { score += 10; }
+    else if (avgGap >= 4.5 && avgGap <= 12.5) { score += 10; }
+    const gapStatus = gapOk ? 'ok' : (avgGap >= 4.5 && avgGap <= 12.5 ? 'warn' : 'fail');
     rules.push({
       name: getMaxRuleName(locale, 'gaps'), value: avgGap.toFixed(1),
-      status: gapOk ? 'ok' : (avgGap >= 4.0 && avgGap <= 10.0 ? 'warn' : 'fail'),
-      detail: getMaxRuleDetail(locale, 'gaps', gapOk ? 'ok' : (avgGap >= 4.0 && avgGap <= 10.0 ? 'warn' : 'fail'), avgGap.toFixed(1)),
+      status: gapStatus,
+      detail: getMaxRuleDetail(locale, 'gaps', gapStatus, avgGap.toFixed(1)),
     });
 
     // 4. Consecutivos (max 1 pair)
@@ -79,18 +87,18 @@ export async function POST(request: Request) {
       detail: getMaxRuleDetail(locale, 'consec', consecStatus, consecValue),
     });
 
-    // 5. Sectores / Décadas (min 4/5)
-    const sectors = [0, 0, 0, 0, 0];
-    for (const n of sorted) sectors[Math.min(4, Math.floor((n - 1) / 10))]++;
+    // 5. Sectores — 6 sectors: 1-9, 10-18, 19-26, 27-35, 36-43, 44-52
+    const sectors = [0, 0, 0, 0, 0, 0];
+    for (const n of sorted) sectors[Math.min(5, Math.floor((n - 1) / 9))]++;
     const covered = sectors.filter(s => s > 0).length;
     const sectorOk = covered >= 4;
     if (sectorOk) score += 20;
     else if (covered === 3) { score += 8; }
     const sectorStatus = sectorOk ? 'ok' : (covered === 3 ? 'warn' : 'fail');
     rules.push({
-      name: getMaxRuleName(locale, 'sectors'), value: `${covered}/5 [${sectors.join('-')}]`,
+      name: getMaxRuleName(locale, 'sectors'), value: `${covered}/6 [${sectors.join('-')}]`,
       status: sectorStatus,
-      detail: getMaxRuleDetail(locale, 'sectors', sectorStatus, `${covered}/5`),
+      detail: getMaxRuleDetail(locale, 'sectors', sectorStatus, `${covered}/6`),
     });
 
     // Bonus: check repeat with last draw

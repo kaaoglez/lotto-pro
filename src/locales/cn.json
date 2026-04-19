@@ -137,7 +137,7 @@
     "dataAsOf": "数据截至 {date} · 共 {count} 期"
   },
   "lottery": {
-    "maxDesc": "7个号码 · 范围1-50 · 周二和周五",
+    "maxDesc": "7个号码 · 范围1-52 · 周二和周五",
     "max": "LOTTO MAX",
     "maxShort": "MAX",
     "max7": "7个匹配",

@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
       if (draw.numbers.length !== 7) {
         return NextResponse.json({ error: `El sorteo ${draw.drawDate} debe tener 7 números` }, { status: 400 });
       }
-      if (draw.numbers.some(n => n < 1 || n > 50)) {
+      if (draw.numbers.some(n => n < 1 || n > 52)) {
         return NextResponse.json({ error: `Números fuera de rango en sorteo ${draw.drawDate}` }, { status: 400 });
       }
       if (new Set(draw.numbers).size !== 7) {
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 
     const updatedDraws = [...added, ...existingDraws];
     const frequency = [];
-    for (let i = 1; i <= 50; i++) frequency.push({ number: i, frequency: 0 });
+    for (let i = 1; i <= 52; i++) frequency.push({ number: i, frequency: 0 });
     for (const draw of updatedDraws) { for (const n of draw.numbers) frequency[n - 1].frequency++; }
 
     const summary = {

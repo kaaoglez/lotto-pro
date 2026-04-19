@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const draws = await getAllDraws(false);
     const frequency: { number: number; frequency: number }[] = [];
-    for (let i = 1; i <= 50; i++) frequency.push({ number: i, frequency: 0 });
+    for (let i = 1; i <= 52; i++) frequency.push({ number: i, frequency: 0 });
     for (const draw of draws) { for (const n of draw.numbers) frequency[n - 1].frequency++; }
 
     return NextResponse.json({

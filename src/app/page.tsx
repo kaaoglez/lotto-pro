@@ -47,10 +47,10 @@ interface DBStatus { totalDraws: number; lastDrawDate: string; firstDrawDate: st
 
 const LOTTERY_CONFIGS: Record<LotteryType, LotteryConfig> = {
   'lotto-max': {
-    key: 'lotto-max', name: 'LOTTO MAX', shortName: 'MAX', numCount: 7, maxNum: 50, apiBase: '/api/lotto',
-    description: '7 numeros · Rango 1-50 · Martes y Viernes',
+    key: 'lotto-max', name: 'LOTTO MAX', shortName: 'MAX', numCount: 7, maxNum: 52, apiBase: '/api/lotto',
+    description: '7 numeros · Rango 1-52 · Martes y Viernes',
     prizeTable: [
-      { match: '7/7', label: '7 aciertos', prize: 'JACKPOT', odds: '1 en 33,294,800', color: 'from-yellow-400 to-amber-500' },
+      { match: '7/7', label: '7 aciertos', prize: 'JACKPOT', odds: '1 en 44,594,853', color: 'from-yellow-400 to-amber-500' },
       { match: '6/7+B', label: '6 aciertos + Bonus', prize: '2.5% del Fondo', odds: '1 en 4,756,400', color: 'from-orange-400 to-red-500' },
       { match: '6/7', label: '6 aciertos', prize: '2.5% del Fondo', odds: '1 en 113,248', color: 'from-orange-400 to-amber-500' },
       { match: '5/7+B', label: '5 aciertos + Bonus', prize: '1.5% del Fondo', odds: '1 en 37,749', color: 'from-amber-400 to-orange-400' },
@@ -730,7 +730,7 @@ function LottoDashboard({ lottery, onSwitch }: { lottery: LotteryType; onSwitch:
                           <Target className="w-3.5 h-3.5 text-gray-500 shrink-0" />
                           <div className="text-center w-full">
                             <span className="text-[8px] text-gray-500 uppercase tracking-wider block">{t('prize.jackpotOdds')}</span>
-                            <span className="text-[11px] font-bold text-gray-300 tabular-nums">{t('prize.oddsFormat', { odds: lottery === 'lotto-max' ? '33,294,800' : '13,983,816' })}</span>
+                            <span className="text-[11px] font-bold text-gray-300 tabular-nums">{t('prize.oddsFormat', { odds: lottery === 'lotto-max' ? '44,594,853' : '13,983,816' })}</span>
                           </div>
                         </div>
                       </div>

@@ -8,32 +8,32 @@ type Locale = 'es' | 'en' | 'fr' | 'cn';
 // ── Lotto Max ──
 const maxRules: Record<Locale, Record<string, Record<string, string>>> = {
   es: {
-    sum: { ok: '✓ {v} está en rango 130-210', warn: '⚠ {v} fuera del rango ideal 130-210', fail: '✗ {v} fuera del rango ideal 130-210' },
+    sum: { ok: '✓ {v} está en rango 150-220', warn: '⚠ {v} fuera del rango ideal 150-220', fail: '✗ {v} fuera del rango ideal 150-220' },
     parity: { ok: '✓ Balance ideal {v}', warn: '⚠ Se prefiere 3/4 o 4/3, tienes {v}', fail: '✗ Se prefiere 3/4 o 4/3, tienes {v}' },
-    gaps: { ok: '✓ Gap {v} en rango 5.0-9.0', warn: '⚠ Gap {v} fuera del rango ideal 5.0-9.0', fail: '✗ Gap {v} fuera del rango ideal 5.0-9.0' },
+    gaps: { ok: '✓ Gap {v} en rango 6.0-11.0', warn: '⚠ Gap {v} fuera del rango ideal 6.0-11.0', fail: '✗ Gap {v} fuera del rango ideal 6.0-11.0' },
     consec: { ok: '✓ Máximo 1 par consecutivo', warn: '⚠ Muchos consecutivos ({v} pares)', fail: '✗ Demasiados consecutivos ({v} pares)' },
-    sectors: { ok: '✓ {v} sectores cubiertos', warn: '⚠ Se requieren mínimo 4/5, tienes {v}', fail: '✗ Se requieren mínimo 4/5, tienes {v}' },
+    sectors: { ok: '✓ {v} sectores cubiertos', warn: '⚠ Se requieren mínimo 4/6, tienes {v}', fail: '✗ Se requieren mínimo 4/6, tienes {v}' },
   },
   en: {
-    sum: { ok: '✓ {v} in range 130-210', warn: '⚠ {v} outside ideal range 130-210', fail: '✗ {v} outside ideal range 130-210' },
+    sum: { ok: '✓ {v} in range 150-220', warn: '⚠ {v} outside ideal range 150-220', fail: '✗ {v} outside ideal range 150-220' },
     parity: { ok: '✓ Ideal balance {v}', warn: '⚠ Prefer 3/4 or 4/3, you have {v}', fail: '✗ Prefer 3/4 or 4/3, you have {v}' },
-    gaps: { ok: '✓ Gap {v} in range 5.0-9.0', warn: '⚠ Gap {v} outside ideal range 5.0-9.0', fail: '✗ Gap {v} outside ideal range 5.0-9.0' },
+    gaps: { ok: '✓ Gap {v} in range 6.0-11.0', warn: '⚠ Gap {v} outside ideal range 6.0-11.0', fail: '✗ Gap {v} outside ideal range 6.0-11.0' },
     consec: { ok: '✓ Max 1 consecutive pair', warn: '⚠ Many consecutive ({v} pairs)', fail: '✗ Too many consecutive ({v} pairs)' },
-    sectors: { ok: '✓ {v} sectors covered', warn: '⚠ Minimum 4/5 required, you have {v}', fail: '✗ Minimum 4/5 required, you have {v}' },
+    sectors: { ok: '✓ {v} sectors covered', warn: '⚠ Minimum 4/6 required, you have {v}', fail: '✗ Minimum 4/6 required, you have {v}' },
   },
   fr: {
-    sum: { ok: '✓ {v} dans la plage 130-210', warn: '⚠ {v} hors de la plage idéale 130-210', fail: '✗ {v} hors de la plage idéale 130-210' },
+    sum: { ok: '✓ {v} dans la plage 150-220', warn: '⚠ {v} hors de la plage idéale 150-220', fail: '✗ {v} hors de la plage idéale 150-220' },
     parity: { ok: '✓ Équilibre idéal {v}', warn: '⚠ Préférer 3/4 ou 4/3, vous avez {v}', fail: '✗ Préférer 3/4 ou 4/3, vous avez {v}' },
-    gaps: { ok: '✓ Écart {v} dans la plage 5.0-9.0', warn: '⚠ Écart {v} hors de la plage idéale 5.0-9.0', fail: '✗ Écart {v} hors de la plage idéale 5.0-9.0' },
+    gaps: { ok: '✓ Écart {v} dans la plage 6.0-11.0', warn: '⚠ Écart {v} hors de la plage idéale 6.0-11.0', fail: '✗ Écart {v} hors de la plage idéale 6.0-11.0' },
     consec: { ok: '✓ Max 1 paire consécutive', warn: '⚠ Trop de consécutifs ({v} paires)', fail: '✗ Trop de consécutifs ({v} paires)' },
-    sectors: { ok: '✓ {v} secteurs couverts', warn: '⚠ Minimum 4/5 requis, vous avez {v}', fail: '✗ Minimum 4/5 requis, vous avez {v}' },
+    sectors: { ok: '✓ {v} secteurs couverts', warn: '⚠ Minimum 4/6 requis, vous avez {v}', fail: '✗ Minimum 4/6 requis, vous avez {v}' },
   },
   cn: {
-    sum: { ok: '✓ {v} 在范围 130-210 内', warn: '⚠ {v} 超出理想范围 130-210', fail: '✗ {v} 超出理想范围 130-210' },
+    sum: { ok: '✓ {v} 在范围 150-220 内', warn: '⚠ {v} 超出理想范围 150-220', fail: '✗ {v} 超出理想范围 150-220' },
     parity: { ok: '✓ 理想平衡 {v}', warn: '⚠ 建议3/4或4/3，当前 {v}', fail: '✗ 建议3/4或4/3，当前 {v}' },
-    gaps: { ok: '✓ 间隔 {v} 在范围 5.0-9.0', warn: '⚠ 间隔 {v} 超出理想范围 5.0-9.0', fail: '✗ 间隔 {v} 超出理想范围 5.0-9.0' },
+    gaps: { ok: '✓ 间隔 {v} 在范围 6.0-11.0', warn: '⚠ 间隔 {v} 超出理想范围 6.0-11.0', fail: '✗ 间隔 {v} 超出理想范围 6.0-11.0' },
     consec: { ok: '✓ 最多1组连续号码', warn: '⚠ 连续号码过多（{v}组）', fail: '✗ 连续号码过多（{v}组）' },
-    sectors: { ok: '✓ 覆盖 {v} 个区间', warn: '⚠ 至少需要4/5，当前 {v}', fail: '✗ 至少需要4/5，当前 {v}' },
+    sectors: { ok: '✓ 覆盖 {v} 个区间', warn: '⚠ 至少需要4/6，当前 {v}', fail: '✗ 至少需要4/6，当前 {v}' },
   },
 };
 

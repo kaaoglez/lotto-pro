@@ -41,7 +41,7 @@ function randomInt(min: number, max: number): number {
 function generateOneLine(): number[] {
   const used = new Set<number>();
   while (used.size < 7) {
-    used.add(randomInt(1, 50));
+    used.add(randomInt(1, 52));
   }
   return Array.from(used);
 }

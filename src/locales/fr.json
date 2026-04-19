@@ -137,7 +137,7 @@
     "dataAsOf": "Données au {date} · {count} tirages"
   },
   "lottery": {
-    "maxDesc": "7 nombres · Plage 1-50 · Mardi et Vendredi",
+    "maxDesc": "7 nombres · Plage 1-52 · Mardi et Vendredi",
     "max": "LOTTO MAX",
     "maxShort": "MAX",
     "max7": "7 correspondances",
