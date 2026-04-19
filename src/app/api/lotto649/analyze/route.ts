@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAllDraws } from '@/lib/lotto-649-store';
+import { getAll649Draws } from '@/lib/lotto-649-store';
 import { getS49RuleName, getS49RuleDetail, getNoneStr, getPairsStr, formatRepeatInfo, getErrorMessage } from '@/lib/dna-i18n';
 
 type Locale = 'es' | 'en' | 'fr' | 'cn';
@@ -59,7 +59,7 @@ export async function POST(req: Request) {
     const sorted = [...numbers].sort((a, b) => a - b);
     const { score, rules } = calcDNA(sorted, locale);
 
-    const draws = await getAllDraws();
+    const draws = await getAll649Draws();
     const totalDraws = draws.length;
     const lastDraw = draws[0];
 

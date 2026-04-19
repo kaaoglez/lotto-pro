@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllDraws } from '@/lib/lotto-max-store';
+import { getAllMaxDraws } from '@/lib/lotto-max-store';
 import fs from 'fs';
 import path from 'path';
 
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const draws = await getAllDraws();
+    const draws = await getAllMaxDraws();
     return NextResponse.json({
       totalDraws: draws.length,
       lastDrawDate: draws[0]?.drawDate,

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAllDraws } from '@/lib/lotto-649-store';
+import { getAll649Draws } from '@/lib/lotto-649-store';
 
 interface DrawEntry { numbers: number[]; }
 
@@ -42,7 +42,7 @@ function calcDNA(nums: number[]): number {
 
 export async function GET() {
   try {
-    const draws = await getAllDraws();
+    const draws = await getAll649Draws();
     const existingKeys = new Set(draws.map(d => d.numbers.sort((a, b) => a - b).join(',')));
     const lines: { numbers: number[]; score: number }[] = [];
     let attempts = 0;

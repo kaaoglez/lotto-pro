@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllDraws } from '@/lib/lotto-max-store';
+import { getAllMaxDraws } from '@/lib/lotto-max-store';
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Ingresa exactamente 7 números' }, { status: 400 });
     }
 
-    const allDraws = await getAllDraws();
+    const allDraws = await getAllMaxDraws();
     const userSet = new Set(numbers);
     const summary = { 3: 0, 4: 0, 5: 0, 6: 0, 7: 0 };
     const results: { drawNumber: number; drawDate: string; matches: number; drawnNumbers: number[]; bonus: number; bonusMatch: boolean }[] = [];

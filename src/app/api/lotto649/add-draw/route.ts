@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllDraws } from '@/lib/lotto-649-store';
+import { getAll649Draws } from '@/lib/lotto-649-store';
 import fs from 'fs';
 import path from 'path';
 

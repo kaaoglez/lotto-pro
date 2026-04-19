@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { getAllDraws } from '@/lib/lotto-649-store';
+import { getAll649Draws } from '@/lib/lotto-649-store';
 
 export async function POST(req: Request) {
   try {
     const { numbers } = await req.json();
     if (!Array.isArray(numbers) || numbers.length !== 6) return NextResponse.json({ error: 'Se necesitan 6 numeros' }, { status: 400 });
 
-    const draws = await getAllDraws();
+    const draws = await getAll649Draws();
     const sorted = [...numbers].sort((a, b) => a - b);
     const numSet = new Set(sorted);
     const summary: Record<number, number> = {};

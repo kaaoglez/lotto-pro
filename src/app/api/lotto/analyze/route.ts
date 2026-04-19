@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAllDraws } from '@/lib/lotto-max-store';
+import { getAllMaxDraws } from '@/lib/lotto-max-store';
 import { getMaxRuleName, getMaxRuleDetail, getNoneStr, getPairsStr, formatRepeatInfo, getErrorMessage } from '@/lib/dna-i18n';
 
 type Locale = 'es' | 'en' | 'fr' | 'cn';
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: getErrorMessage(locale, 'unique') }, { status: 400 });
     }
 
-    const allDraws = await getAllDraws();
+    const allDraws = await getAllMaxDraws();
 
     const sorted = [...numbers].sort((a, b) => a - b);
     const rules: { name: string; value: string; status: 'ok' | 'warn' | 'fail'; detail: string }[] = [];

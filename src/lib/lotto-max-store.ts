@@ -94,7 +94,7 @@ async function fetchFromBCLC(timeout = 8000): Promise<LottoMaxDraw[]> {
  * Get all draws. Tries BCLC first, then HTTP static JSON fallback.
  * Works on both localhost and Vercel serverless.
  */
-export async function getAllDraws(forceRefresh = false): Promise<LottoMaxDraw[]> {
+export async function getAllMaxDraws(forceRefresh = false): Promise<LottoMaxDraw[]> {
   // 1. Try BCLC live data
   try {
     return await fetchFromBCLC(forceRefresh ? 15000 : 8000);
